@@ -1,7 +1,10 @@
 {
   "cleanUrls": true,
-  "outputDirectory": ".",
+  "trailingSlash": false,
   "redirects": [
     { "source": "/case-study-1", "destination": "/work/kigs", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/work/kigs", "destination": "/work/kigs.html" }
   ]
 }
