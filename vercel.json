@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "outputDirectory": ".",
+  "redirects": [
+    { "source": "/case-study-1", "destination": "/work/kigs", "permanent": true }
+  ]
+}
