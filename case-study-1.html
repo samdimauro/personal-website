@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0; url=/work/kigs">
+  <title>Kigs — Sam Di Mauro</title>
+  <meta name="description" content="Case study: Kigs — A social way to find nights that actually feel like you.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --text: #181818;
+      --text-mid: rgba(24, 24, 24, 0.65);
+      --text-dim: rgba(24, 24, 24, 0.50);
+      --card-surface: rgba(24, 24, 24, 0.03);
+      --bg: #fff;
+      --geist: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+      --px: 24px;
+      --col-gap: 24px;
+      --section-gap: 100px;
+    }
+    html { scroll-behavior: auto; }
+    body {
+      font-family: var(--geist);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-wrap: pretty;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    .tabler-icon {
+      display: block;
+      flex-shrink: 0;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       NAV
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      padding: 0 24px;
+      font-size: 15.5px;
+      font-weight: 500;
+      background: transparent;
+      transition: color 0.3s;
+    }
+    .nav-logo {
+      font-weight: 600;
+      font-size: 15.5px;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      white-space: nowrap;
+      text-decoration: none;
+      color: inherit;
+      -webkit-text-fill-color: currentColor;
+      cursor: var(--cursor-pointer);
+      background-image: none;
+      background-size: auto;
+      -webkit-background-clip: border-box;
+      background-clip: border-box;
+      animation: none;
+      transition: color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-text-fill-color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-image 0.65s ease-out, background-size 0.65s ease-out;
+    }
+    .nav-logo:hover {
+      transition: color 0.22s ease-out, background-image 0.3s ease-out, -webkit-text-fill-color 0.22s ease-out;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      background-image: linear-gradient(
+        90deg,
+        #a0c4ff, #c4b5fd, #e0e0e0, #818cf8, #f0f0f0, #7dd3fc, #a78bfa, #1e1e1e, #a0c4ff
+      );
+      background-size: 200% 100%;
+      animation: iridescent 2s linear infinite;
+    }
+    @keyframes iridescent {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      list-style: none;
+      margin-left: 24px;
+      padding-top: 1px;
+    }
+    .nav-links a {
+      color: var(--text-dim);
+      transition: color 0.2s;
+      font-size: 15.5px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      line-height: 1;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav.is-light {
+      color: #fff;
+    }
+    .nav.is-light .nav-logo {
+      color: rgba(255, 255, 255, 0.85);
+      -webkit-text-fill-color: currentColor;
+      transition: color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-text-fill-color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-image 0.65s ease-out, background-size 0.65s ease-out;
+    }
+    .nav.is-light .nav-logo:hover {
+      transition: color 0.22s ease-out, background-image 0.3s ease-out, -webkit-text-fill-color 0.22s ease-out;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      background-image: linear-gradient(
+        90deg,
+        #a0c4ff, #c4b5fd, #e0e0e0, #818cf8, #f0f0f0, #7dd3fc, #a78bfa, #f5f5f5, #a0c4ff
+      );
+      background-size: 200% 100%;
+      animation: iridescent 2s linear infinite;
+    }
+    .nav.is-light .nav-links a { color: rgba(255,255,255,0.45); }
+    .nav.is-light .nav-links a:hover { color: rgba(255,255,255,0.85); }
+    .nav-spacer { flex: 1; }
+    .nav-time {
+      display: inline-block;
+      font-size: 15.5px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      color: var(--text);
+      white-space: nowrap;
+      cursor: var(--cursor-default);
+      vertical-align: baseline;
+      text-align: right;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       6-COLUMN PAGE GRID
+       ═══════════════════════════════════════════════════════════════════════════ */
+    /* Full viewport width; content aligns to 6 cols between var(--px) side gutters */
+    .cs-main {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      column-gap: var(--col-gap);
+      padding: 0 var(--px);
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    .cs-subgrid {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+    }
+    .cs-span-2 { grid-column: span 2; }
+    .cs-span-5 { grid-column: span 5; }
+    .cs-span-6 { grid-column: 1 / -1; }
+    /* 3-col rail: desktop / mobile default = cols 2–4 (col 1 empty). Tablet uses col 1 — see media query. */
+    .cs-inset-3 {
+      grid-column: 2 / span 3;
+      min-width: 0;
+    }
+    /* Callout + Role + stats: 4 tracks from col 2 (cols 2–5). Tablet → col 1 — see media query. */
+    .cs-inset-4 {
+      grid-column: 2 / span 4;
+      min-width: 0;
+    }
+    /* Callout: 3 tracks on desktop only (>1200px) */
+    @media (min-width: 1201px) {
+      .cs-callout.cs-inset-4 {
+        grid-column: 2 / span 3;
+      }
+    }
+    /* What/Why cards: 3-col rail from col 2 (cols 2–4); full row tablet/mobile */
+    .cs-grid.cs-card-strip {
+      grid-column: 2 / span 3;
+      min-width: 0;
+    }
+
+    main {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .cs-hero {
+      padding: 160px 0 48px;
+    }
+    .cs-hero-title {
+      font-size: 84px;
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 100%;
+      text-align: left;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       PROJECT META
+       ═══════════════════════════════════════════════════════════════════════════ */
+    /* Full-bleed meta: 3 × 2 columns on the 6-col subgrid */
+    .cs-meta.cs-subgrid {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      align-items: start;
+      padding-bottom: 28px;
+    }
+    .cs-meta.cs-subgrid > .cs-meta-item {
+      grid-column: span 2;
+      min-width: 0;
+    }
+    .cs-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+    .cs-meta-label {
+      font-size: 15.5px;
+      font-weight: 420;
+      color: var(--text);
+    }
+    .cs-meta-value {
+      font-size: 15.5px;
+      font-weight: 400;
+      color: var(--text-mid);
+      line-height: 1.4;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       HERO IMAGE
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .cs-hero-img {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    .cs-hero-img-inner {
+      width: 100%;
+      height: min(80vh, 880px);
+      min-height: 620px;
+      border-radius: 16px;
+      background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 15.5px;
+      overflow: hidden;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       SECTIONS & LABELS
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .cs-label {
+      font-size: 15.5px;
+      font-weight: 420;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .cs-section {
+      padding: 0 0 var(--section-gap);
+    }
+    .cs-section--last {
+      padding-bottom: 100px;
+    }
+    .cs-section--intro {
+      padding-top: var(--section-gap);
+      padding-bottom: var(--section-gap);
+    }
+    .cs-section--intro.cs-subgrid {
+      row-gap: 0;
+    }
+    .cs-section--intro .cs-label,
+    .cs-section.cs-inset-3 > .cs-label {
+      padding-left: 1px;
+    }
+
+    /* Intro “h2” copy — 56px >1200px; 40px ≤1200px; 28px ≤768px (see media queries) */
+    .cs-body-lg {
+      font-size: 56px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-align: left;
+    }
+    .cs-body-lg strong {
+      font-weight: inherit;
+    }
+    .cs-body-lg p {
+      margin: 0;
+    }
+
+    .cs-body {
+      font-size: 15.5px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--text-mid);
+      text-align: left;
+    }
+
+    /* Secondary titles — 40px desktop+tablet, 24px mobile */
+    .cs-problem-title {
+      font-size: 40px;
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 22px;
+      text-align: left;
+    }
+    .cs-problem-copy {
+      font-size: 15.5px;
+      font-weight: 400;
+      line-height: 1.52;
+      color: var(--text-mid);
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .cs-body strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       WHAT / WHY GRID (internal 2×2; 3-col rail cols 2–4 on desktop)
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .cs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding-bottom: var(--section-gap);
+    }
+    .cs-grid-item-label {
+      font-size: 15.5px;
+      font-weight: 420;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .cs-grid-item-text {
+      font-size: 15.5px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--text-mid);
+      text-align: left;
+    }
+    .cs-grid > div {
+      background: var(--card-surface);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+    }
+
+    /* Callout — 40px >1200; 28px tablet; 24px mobile */
+    .cs-callout {
+      padding-bottom: var(--section-gap);
+    }
+    .cs-callout-inner {
+      margin: 0;
+      font-size: 40px;
+      font-weight: 400;
+      font-style: normal;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .cs-img-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding-bottom: var(--section-gap);
+    }
+    .cs-img-2 { background: linear-gradient(135deg, #0d1117 0%, #161b22 40%, #21262d 100%); }
+    .cs-img-placeholder {
+      width: 100%;
+      aspect-ratio: 1.08 / 1;
+      border-radius: 16px;
+      background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 15.5px;
+    }
+
+    .cs-img-block {
+      padding-bottom: var(--section-gap);
+    }
+    .cs-img-full {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 20px;
+      background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 15.5px;
+    }
+
+    .cs-divider {
+      padding: 0;
+    }
+    .cs-divider-line {
+      border: none;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .cs-iter {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding-bottom: var(--section-gap);
+    }
+    .cs-iter > div {
+      background: var(--card-surface);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+    }
+    .cs-iter-label {
+      font-size: 15.5px;
+      font-weight: 420;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .cs-iter-text {
+      font-size: 15.5px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--text-mid);
+    }
+
+    .cs-insights {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .cs-insight {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      column-gap: 8px;
+      align-items: start;
+    }
+    .cs-insight-title {
+      font-size: 15.5px;
+      font-weight: 420;
+      line-height: 1.4;
+      color: var(--text);
+    }
+    .cs-insight-desc {
+      font-size: 15.5px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-mid);
+    }
+    .cs-insight-bullet {
+      font-size: 16px;
+      line-height: 1.2;
+      color: var(--text-mid);
+      margin-top: 2px;
+    }
+    .cs-insight-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .cs-text-2col {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      padding: 0 0 var(--section-gap);
+    }
+    .cs-text-2col > div {
+      grid-column: span 2;
+    }
+    .cs-text-2col .cs-label {
+      margin-bottom: 16px;
+    }
+    .cs-text-2col-body {
+      font-size: 15.5px;
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--text-mid);
+      text-align: left;
+    }
+
+    .cs-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      padding: 0 0 var(--section-gap);
+    }
+    .cs-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cs-stat-label {
+      font-size: 15.5px;
+      font-weight: 420;
+      color: var(--text);
+      padding-left: 1px;
+    }
+    .cs-stat-value {
+      font-size: 40px;
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--text);
+    }
+
+    /* ── Glow transition ─────────────────────────────────────────── */
+    .glow-section {
+      position: relative;
+      z-index: 0;
+      width: 100%;
+      height: 128vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: visible;
+      /* NO perspective — matches Framer (no perspective on any ancestor) */
+    }
+    .glow-animated {
+      position: absolute;
+      bottom: -5vh;
+      left: 50%;
+      width: 100%;
+      height: min-content;
+      display: flex;
+      align-items: flex-end;
+      transform: translateX(-50%) rotateX(88deg);
+      transform-origin: 50% 0%;
+      will-change: transform;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform-style: preserve-3d;
+      overflow: visible;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .glow-img-wrap {
+      flex: 1 0 0;
+      width: 1px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .glow-img-fig {
+      flex: none;
+      width: 162%;
+      height: clamp(700px, 130vh, 1400px);
+      position: relative;
+      will-change: transform;
+      transform: translateZ(0);
+    }
+    .glow-img-fig img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+    }
+
+    /* ── Dark band ───────────────────────────────────────────────── */
+    .dark-band {
+      background: #000;
+      position: relative;
+      z-index: 1;
+    }
+    .dark-band-pin {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .dark-band-spacer { display: none; }
+    .dark-band .site-footer {
+      background: transparent;
+      border-radius: 0;
+    }
+    .dark-band .footer-logo { color: #fff; }
+    .dark-band .footer-tagline { color: rgba(255, 255, 255, 0.5); }
+    .dark-band .footer-col-label { color: #fff; }
+    .dark-band .footer-link { color: rgba(255, 255, 255, 0.5); }
+    .dark-band .footer-link:hover { color: #fff; }
+    .dark-band .footer-bottom {
+      color: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .cs-next-title-row {
+      grid-column: 1 / -1;
+      width: 100%;
+      padding: 120px 0 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+    .cs-next-title-word {
+      font-size: 64px;
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: rgba(255,255,255,0.18);
+    }
+    .cs-next {
+      grid-column: 1 / -1;
+      margin: 0 0 80px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+    .cs-next-tile {
+      width: calc((100% - 5 * var(--col-gap)) / 6 * 3 + 2 * var(--col-gap));
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      text-decoration: none;
+      transform: scale(1);
+      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+    .cs-next-tile:hover { transform: scale(1.025); }
+    .cs-next-tile:active { transform: scale(0.98); }
+    .cs-main:has(.cs-next-tile:hover) .cs-next-title-word {
+      opacity: 0.3;
+      transition: opacity 0.35s ease;
+    }
+    .cs-next-title-word {
+      transition: opacity 0.35s ease;
+    }
+    .cs-next-tile-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15.5px;
+      color: rgba(255, 255, 255, 0.15);
+      letter-spacing: -0.05px;
+    }
+    .cs-next-tile-title {
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 115%;
+      color: #fff;
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+    .cs-next-tile-desc {
+      font-size: 15.5px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.5);
+      padding: 0 12px;
+    }
+
+    .footer { display: none; }
+
+    .site-footer {
+      background: var(--bg);
+      padding: 0 var(--px) 0;
+      margin-top: 200px;
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      column-gap: var(--col-gap);
+      flex: 1;
+      align-content: end;
+      padding-bottom: 0;
+    }
+    .footer-brand {
+      grid-column: 1 / span 2;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-bottom: 72px;
+    }
+    .footer-logo {
+      font-size: 15.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .footer-tagline {
+      font-size: 15.5px;
+      font-weight: 400;
+      color: var(--text-mid);
+      line-height: 1.5;
+    }
+    .footer-nav {
+      grid-column: 4 / span 3;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding-bottom: 72px;
+    }
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .footer-col-label {
+      font-size: 15.5px;
+      font-weight: 420;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .footer-link {
+      font-size: 15.5px;
+      font-weight: 400;
+      color: var(--text-mid);
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: var(--cursor-pointer);
+      text-align: left;
+      font-family: inherit;
+      line-height: 1.5;
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--text); }
+    .footer-bottom {
+      grid-column: 1 / -1;
+      padding: 24px 0 40px;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      font-size: 15.5px;
+      font-weight: 400;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    @media (min-width: 1201px) {
+      .cs-meta.cs-subgrid > .cs-meta-item:nth-child(1) { grid-column: 1 / 3; }
+      .cs-meta.cs-subgrid > .cs-meta-item:nth-child(2) { grid-column: 4 / 5; }
+      .cs-meta.cs-subgrid > .cs-meta-item:nth-child(3) { grid-column: 5 / 7; }
+    }
+
+    @media (max-width: 1200px) {
+      .cs-section--intro .cs-body-lg {
+        font-size: 40px;
+        letter-spacing: -0.02em;
+      }
+    }
+
+    /* Tablet only: inset rail from col 1; Role + stats full row; card grid full row; callout type */
+    @media (max-width: 1200px) and (min-width: 769px) {
+      .cs-inset-3 {
+        grid-column: 1 / span 3;
+      }
+      .cs-section.cs-inset-3 {
+        grid-column: 1 / span 4;
+      }
+      .cs-inset-4 {
+        grid-column: 1 / span 4;
+      }
+      .cs-iter.cs-inset-4 {
+        grid-column: 1 / -1;
+      }
+      .footer-brand { grid-column: 1 / span 3; }
+      .footer-nav    { grid-column: 4 / span 3; }
+      .cs-text-2col.cs-inset-4,
+      .cs-stats.cs-inset-4 {
+        grid-column: 1 / -1;
+      }
+      .cs-grid.cs-card-strip {
+        grid-column: 1 / -1;
+      }
+      .cs-callout-inner {
+        font-size: 28px;
+        letter-spacing: -0.02em;
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root { --px: 16px; --col-gap: 16px;       --section-gap: 40px; }
+
+      .cs-section--last { padding-bottom: 100px; }
+
+      .cs-section.cs-inset-3 {
+        grid-column: 1 / -1;
+      }
+
+      .cs-inset-4 { grid-column: 1 / -1; }
+
+      .cs-grid.cs-card-strip { grid-column: 1 / -1; }
+
+      .nav { padding: 0 16px; height: 44px; }
+      .nav-links { gap: 12px; margin-left: auto; }
+      .nav-spacer { display: none; }
+      .nav-time { display: none; }
+
+      .cs-hero { padding: 120px 0 48px; }
+      .cs-hero-title {
+        font-size: 40px;
+        letter-spacing: -0.025em;
+        line-height: 100%;
+      }
+
+      .cs-section--intro {
+        grid-column: 1 / -1;
+      }
+      .cs-section--intro.cs-subgrid > .cs-span-5 {
+        grid-column: 1 / -1;
+      }
+
+      .cs-section--intro .cs-body-lg {
+        font-size: 28px;
+      }
+
+      .cs-callout-inner {
+        font-size: 24px;
+        color: var(--text);
+      }
+
+      .cs-problem-title {
+        font-size: 24px;
+        margin-bottom: 16px;
+      }
+      .cs-problem-copy { font-size: 15.5px; }
+
+      .cs-next-display {
+        font-size: 40px;
+        letter-spacing: -0.025em;
+      }
+
+      .cs-stat-value { font-size: 24px; }
+
+      .cs-grid { grid-template-columns: 1fr; gap: 16px; }
+
+      .cs-iter { grid-template-columns: 1fr; }
+
+      .cs-img-2col { grid-template-columns: 1fr; gap: 16px; }
+
+      .cs-text-2col { grid-template-columns: 1fr; gap: 48px; }
+
+      .cs-stats { grid-template-columns: 1fr 1fr; gap: 32px; }
+
+      .cs-hero-img-inner {
+        min-height: 480px;
+        height: 68vh;
+        border-radius: 14px;
+      }
+      .cs-img-placeholder { border-radius: 12px; }
+      .cs-img-full { aspect-ratio: 4 / 3; border-radius: 14px; }
+
+      .cs-next {
+        margin: 0 0 80px;
+      }
+      .cs-next-project-name { grid-column: 1 / span 3; }
+      .cs-next-display { grid-column: 1 / -1; text-align: left; }
+
+      .footer { padding: 24px 16px 16px; }
+      .footer-brand { grid-column: 1 / -1; padding-bottom: 48px; }
+      .footer-nav    { grid-column: 1 / -1; padding-bottom: 48px; }
+    }
+
+  </style>
+  <link rel="stylesheet" href="typography.css">
+  <link rel="stylesheet" href="cursors.css">
+</head>
+<body>
+
+  <nav class="nav" id="mainNav">
+    <a href="index.html" class="nav-logo">Sam Di Mauro</a>
+    <ul class="nav-links">
+      <li><a href="index.html#works">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <div class="nav-spacer"></div>
+    <span class="nav-time" id="navTime">London, --:--</span>
+  </nav>
+
+  <main>
+
+    <div class="cs-main">
+
+    <!-- ── Hero ─────────────────────────────────────────────────── -->
+    <section class="cs-hero cs-subgrid">
+      <h1 class="cs-hero-title cs-span-5">Kigs. A social way to find nights that actually feel like&nbsp;you.</h1>
+    </section>
+
+    <div class="cs-meta cs-subgrid">
+      <div class="cs-meta-item">
+        <span class="cs-meta-label">Client</span>
+        <span class="cs-meta-value">Kigs</span>
+      </div>
+      <div class="cs-meta-item">
+        <span class="cs-meta-label">Role</span>
+        <span class="cs-meta-value">Product design lead</span>
+      </div>
+      <div class="cs-meta-item">
+        <span class="cs-meta-label">Team</span>
+        <span class="cs-meta-value">Designer · PM · Engineers · Legal</span>
+      </div>
+    </div>
+
+    <div class="cs-hero-img cs-span-6">
+      <div class="cs-hero-img-inner">App overview — discovery feed</div>
+    </div>
+
+    <!-- ── Intro ──────────────────────────────────────────────────── -->
+    <section class="cs-section cs-section--intro cs-subgrid">
+      <p class="cs-label cs-span-5">Intro</p>
+      <div class="cs-body-lg cs-span-5">
+        <p>I've spent most of my twenties in small rooms with big sound. The kind of nights where you spot a flyer on Instagram, confirm a rumour in a group chat, jump to Resident Advisor for details, then to SoundCloud to decide if the set is your thing. That pinball-machine journey is normal in underground music. It's also exhausting. With Kigs, we set out to make discovery feel like the culture actually works — social first, trust-led, music&nbsp;forward.</p>
+      </div>
+    </section>
+
+    <!-- ── At a glance ───────────────────────────────────────────── -->
+    <div class="cs-grid cs-card-strip">
+      <div>
+        <p class="cs-grid-item-label">What</p>
+        <p class="cs-grid-item-text">Early-stage social product for underground music discovery, event planning, and crew&nbsp;coordination.</p>
+      </div>
+      <div>
+        <p class="cs-grid-item-label">Why</p>
+        <p class="cs-grid-item-text">Discovery is social by nature — but the tools people use are fragmented and trust-blind.</p>
+      </div>
+      <div>
+        <p class="cs-grid-item-label">Stage</p>
+        <p class="cs-grid-item-text">0 → 1 MVP, live pilot at a Toulouse launch&nbsp;event.</p>
+      </div>
+      <div>
+        <p class="cs-grid-item-label">My role</p>
+        <p class="cs-grid-item-text">UX strategy, IA, visual design, design system — end-to-end.</p>
+      </div>
+    </div>
+
+    <!-- ── Hypothesis callout ─────────────────────────────────────── -->
+    <div class="cs-callout cs-inset-4">
+      <h3 class="cs-callout-inner">Fans don't follow events. They follow people. Connect the right people and the commitment barrier&nbsp;drops.</h3>
+    </div>
+
+    <!-- ── Research images ────────────────────────────────────────── -->
+    <div class="cs-img-2col cs-span-6">
+      <div class="cs-img-placeholder">Research — interview synthesis</div>
+      <div class="cs-img-placeholder">JTBD survey — key themes</div>
+    </div>
+
+    <!-- ── Problem ───────────────────────────────────────────────── -->
+    <section class="cs-section cs-inset-3">
+      <p class="cs-label">The problem</p>
+      <h2 class="cs-problem-title">Too many apps, not enough&nbsp;trust.</h2>
+      <p class="cs-problem-copy">Finding a good night out in underground music is a multi-app, multi-tab, multi-group-chat exercise. You hear about something through a friend, confirm it on Instagram, research the lineup on Resident Advisor, audition the sound on SoundCloud, then coordinate with your crew on WhatsApp. None of these tools talk to each other. None of them know your taste or your&nbsp;circle.</p>
+      <p class="cs-problem-copy">The drop-off between discovering a night and actually going is enormous — not because people aren't interested, but because the friction is real. Existing platforms either cast too wide a net or are too passive. None centre the social layer that actually drives decisions in underground music:&nbsp;who's&nbsp;going.</p>
+      <p class="cs-problem-copy">We interviewed 5–8 underground music fans across London, Toulouse, Sydney, and California — mapping real discovery and planning behaviours into jobs-to-be-done — then ran a paid JTBD survey (~200 respondents). Three patterns kept repeating:</p>
+      <div class="cs-insights">
+        <div class="cs-insight">
+          <span class="cs-insight-bullet" aria-hidden="true">•</span>
+          <div class="cs-insight-text">
+            <p class="cs-insight-title">Social trust beats algorithms.</p>
+            <p class="cs-insight-desc">If someone I trust is going, the event earns my time.</p>
+          </div>
+        </div>
+        <div class="cs-insight">
+          <span class="cs-insight-bullet" aria-hidden="true">•</span>
+          <div class="cs-insight-text">
+            <p class="cs-insight-title">Discovery is fragmented; curation shouldn't be.</p>
+            <p class="cs-insight-desc">Surprise me, but keep the quality bar high.</p>
+          </div>
+        </div>
+        <div class="cs-insight">
+          <span class="cs-insight-bullet" aria-hidden="true">•</span>
+          <div class="cs-insight-text">
+            <p class="cs-insight-title">Planning is the real friction.</p>
+            <p class="cs-insight-desc">Finding something good is step one. Coordinating the crew is the headache.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Object model image ─────────────────────────────────────── -->
+    <div class="cs-img-block cs-span-6">
+      <div class="cs-img-full">Object model — users · events · artists · venues · mixes</div>
+    </div>
+
+    <!-- ── Design ────────────────────────────────────────────────── -->
+    <section class="cs-section cs-inset-3">
+      <p class="cs-label">Design</p>
+      <h2 class="cs-problem-title">Starting with objects, not&nbsp;screens.</h2>
+      <p class="cs-problem-copy">Rather than jumping to UI, I mapped the ecosystem using an object-based mindset — users, events, artists, venues, mixes — agreeing the backbone fast before touching screens. The mental model: discovery begins with events and people, supported by music. Not the other way around.</p>
+      <p class="cs-problem-copy">Navigation took three meaningful iterations. We needed a structure that matched how people actually think about going out — entry through events, social signals surfaced early, and the ability to explore without losing&nbsp;context.</p>
+    </section>
+
+    <!-- ── Navigation iterations ─────────────────────────────────── -->
+    <div class="cs-iter cs-inset-4">
+      <div>
+        <p class="cs-iter-label">V1</p>
+        <p class="cs-iter-text">Everything unified into a home with carousels. Looked clean but blurred intent — too much happening at&nbsp;once.</p>
+      </div>
+      <div>
+        <p class="cs-iter-label">V2</p>
+        <p class="cs-iter-text">Feeds separated from Events and Map. Better mental model, but home felt thin and&nbsp;underworked.</p>
+      </div>
+      <div>
+        <p class="cs-iter-label">V3</p>
+        <p class="cs-iter-text">Events as the entry point, friend-powered signals early, Search decoupled from Map. The right&nbsp;balance.</p>
+      </div>
+    </div>
+
+    <!-- ── Navigation screens ─────────────────────────────────────── -->
+    <div class="cs-img-2col cs-span-6">
+      <div class="cs-img-placeholder">Navigation — V1 explorations</div>
+      <div class="cs-img-placeholder">Navigation — V3 final</div>
+    </div>
+
+    <!-- ── Two key decisions ──────────────────────────────────────── -->
+    <div class="cs-text-2col cs-inset-4">
+      <div>
+        <p class="cs-label">Event as a post-like object</p>
+        <p class="cs-text-2col-body">Treating events as social artefacts — likeable, commentable, repostable — unlocked familiar behaviours without building a heavy social network from scratch. It matches how people actually share nights: not as transactions, but as things worth telling someone&nbsp;about.</p>
+      </div>
+      <div>
+        <p class="cs-label">A map with social proof</p>
+        <p class="cs-text-2col-body">Progressive disclosure keeps it legible — light clusters zoomed out, attendance badges and date chips appearing as you zoom in. You're not just picking a venue; you're joining a night with your&nbsp;people.</p>
+      </div>
+    </div>
+
+    <!-- ── Event card + Map screens ───────────────────────────────── -->
+    <div class="cs-img-2col cs-span-6">
+      <div class="cs-img-placeholder">Event card — social artefact view</div>
+      <div class="cs-img-placeholder">Map — progressive social disclosure</div>
+    </div>
+
+    <!-- ── Launch ────────────────────────────────────────────────── -->
+    <section class="cs-section cs-inset-3">
+      <p class="cs-label">Launch</p>
+      <h2 class="cs-problem-title">Taking it to&nbsp;Toulouse.</h2>
+      <p class="cs-problem-copy">To stress-test the product with real people, we hosted a launch event in Toulouse — a club night with DJs — and listed and promoted it entirely inside Kigs. It gave us first-hand feedback on trust signals, planning flow, and map legibility alongside early usage data to compare against prototype&nbsp;learnings.</p>
+      <p class="cs-problem-copy">Early signals confirmed our instincts: people prefer event-first entry, friend and promoter trust changes which events they open, and a gentle planning layer is enough to move nights&nbsp;forward.</p>
+    </section>
+
+    <!-- ── Launch image ───────────────────────────────────────────── -->
+    <div class="cs-img-block cs-span-6">
+      <div class="cs-img-full">Toulouse launch — event night / in-app screens</div>
+    </div>
+
+    <!-- ── Results ───────────────────────────────────────────────── -->
+    <div class="cs-stats cs-inset-4">
+      <div class="cs-stat">
+        <span class="cs-stat-label">Pilot users</span>
+        <span class="cs-stat-value">—</span>
+      </div>
+      <div class="cs-stat">
+        <span class="cs-stat-label">Event views</span>
+        <span class="cs-stat-value">—</span>
+      </div>
+      <div class="cs-stat">
+        <span class="cs-stat-label">Mix plays</span>
+        <span class="cs-stat-value">—</span>
+      </div>
+      <div class="cs-stat">
+        <span class="cs-stat-label">Interested → going</span>
+        <span class="cs-stat-value">—</span>
+      </div>
+    </div>
+
+    <!-- ── What's next ────────────────────────────────────────────── -->
+    <section class="cs-section cs-section--last cs-inset-3">
+      <p class="cs-label">What's next</p>
+      <h2 class="cs-problem-title">Two honest&nbsp;bets.</h2>
+      <p class="cs-problem-copy">As live data grows, we'll tune around trust signals rather than a heavy recommendation engine. Both bets are measurable and both stay true to the trust-first approach that defines the&nbsp;product.</p>
+      <div class="cs-insights">
+        <div class="cs-insight">
+          <span class="cs-insight-bullet" aria-hidden="true">•</span>
+          <div class="cs-insight-text">
+            <p class="cs-insight-title">Second-degree attendance.</p>
+            <p class="cs-insight-desc">Surfacing who-of-who is going should lift event taps without needing a recommendation algorithm.</p>
+          </div>
+        </div>
+        <div class="cs-insight">
+          <span class="cs-insight-bullet" aria-hidden="true">•</span>
+          <div class="cs-insight-text">
+            <p class="cs-insight-title">Events ↔ artists ↔ mixes.</p>
+            <p class="cs-insight-desc">Connecting these three objects into a single follow-through path should increase depth of engagement — and reduce the app-hopping Kigs was built to solve.</p>
+          </div>
+        </div>
+      </div>
+      <p class="cs-problem-copy" style="margin-top: 32px;">The app is live, the dataset is embarrassingly small, and three engineers are already disagreeing about what to build next. Honestly, that last part is a good&nbsp;sign.</p>
+    </section>
+
+    </div>
+
+  </main>
+
+  <!-- ── Glow transition ───────────────────────────────────────── -->
+  <section class="glow-section" id="glow1">
+    <figure class="glow-animated" id="glowPlane1">
+      <div class="glow-img-wrap">
+        <div class="glow-img-fig">
+          <img src="glow.png" alt="" width="1920" height="2448">
+        </div>
+      </div>
+    </figure>
+  </section>
+
+  <!-- ── Dark band: next project + footer ──────────────────────── -->
+  <div class="dark-band">
+    <div class="dark-band-pin">
+      <div class="cs-main">
+        <div class="cs-next-title-row" id="nextTitleRow">
+          <span class="cs-next-title-word" data-delay="0">Next</span><span class="cs-next-title-word" data-delay="120">project</span>
+        </div>
+        <div class="cs-next cs-subgrid">
+          <a href="case-study-2.html" class="cs-next-tile">
+            <div class="cs-next-tile-thumb cs-img-2">Project image</div>
+            <p class="cs-next-tile-title">Launched real-time community reporting to 5M+ OS Maps&nbsp;users</p>
+            <p class="cs-next-tile-desc">Generated 5,000+ community reports within the first 3 months, creating a feedback loop that improved data accuracy across the&nbsp;platform.</p>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="dark-band-spacer"></div>
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo">Sam Di Mauro</a>
+        <p class="footer-tagline">Product designer, London.</p>
+      </div>
+      <nav class="footer-nav">
+        <div class="footer-col">
+          <p class="footer-col-label">Site</p>
+          <a href="index.html#works" class="footer-link">Work</a>
+          <a href="index.html#contact" class="footer-link">Contact</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-label">Connect</p>
+          <a href="https://www.linkedin.com/in/samueledimauro/" class="footer-link" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <button class="footer-link" id="footerEmailBtn">dimaurosamuele@gmail.com</button>
+        </div>
+      </nav>
+      <div class="footer-bottom">
+        &copy; 2026 Sam Di Mauro. Trying to do good work.
+      </div>
+    </div>
+  </footer>
+  </div><!-- /dark-band -->
+
+  <script>
+  (function() {
+    'use strict';
+
+    var navTimeEl = document.getElementById('navTime');
+    var TIME_MSG = 'Hello there!';
+    var SCRAMBLE_CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz023456789';
+    var navTimeHovering = false;
+    var navTimeScrambleRaf = null;
+
+    function getLondonTimeLabel() {
+      var now = new Date();
+      var t = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' });
+      return 'London, ' + t;
+    }
+
+    function padTimeLabelToLenLeft(str, len) {
+      if (str.length >= len) return str.slice(0, len);
+      return '\u00A0'.repeat(len - str.length) + str;
+    }
+
+    function navTimeGrowMinWidth() {
+      if (!navTimeEl) return;
+      var w = navTimeEl.offsetWidth;
+      var prev = parseInt(navTimeEl.style.minWidth, 10) || 0;
+      if (w > prev) navTimeEl.style.minWidth = w + 'px';
+    }
+
+    function navTimeClearMinWidth() {
+      if (!navTimeEl) return;
+      navTimeEl.style.minWidth = '';
+    }
+
+    function updateTime() {
+      if (!navTimeEl || navTimeHovering) return;
+      navTimeEl.textContent = getLondonTimeLabel();
+    }
+
+    function randomChar() {
+      return SCRAMBLE_CHARSET[Math.floor(Math.random() * SCRAMBLE_CHARSET.length)];
+    }
+
+    function runNavTimeHoverAnimation() {
+      if (!navTimeEl) return;
+      if (navTimeScrambleRaf) cancelAnimationFrame(navTimeScrambleRaf);
+      var fromLen = navTimeEl.textContent.length;
+      var len = fromLen;
+      var targetPadded = padTimeLabelToLenLeft(TIME_MSG, len);
+      var start = performance.now();
+      var flickerMs = 500;
+      var resolveMs = 450;
+      var lastShuffle = start - 70;
+      var shuffleEveryMs = 55;
+
+      function tick(now) {
+        if (!navTimeHovering) return;
+        var elapsed = now - start;
+        if (elapsed < flickerMs) {
+          if (now - lastShuffle < shuffleEveryMs) {
+            navTimeScrambleRaf = requestAnimationFrame(tick);
+            return;
+          }
+          lastShuffle = now;
+          var s = '';
+          for (var i = 0; i < len; i++) s += randomChar();
+          navTimeEl.textContent = s;
+          navTimeGrowMinWidth();
+          navTimeScrambleRaf = requestAnimationFrame(tick);
+          return;
+        }
+        if (elapsed < flickerMs + resolveMs) {
+          var p = (elapsed - flickerMs) / resolveMs;
+          var out = '';
+          for (var j = 0; j < len; j++) {
+            out += j / len < p ? targetPadded.charAt(j) : randomChar();
+          }
+          navTimeEl.textContent = out;
+          navTimeGrowMinWidth();
+          navTimeScrambleRaf = requestAnimationFrame(tick);
+          return;
+        }
+        navTimeEl.textContent = targetPadded;
+        navTimeGrowMinWidth();
+        navTimeScrambleRaf = null;
+      }
+      navTimeScrambleRaf = requestAnimationFrame(tick);
+    }
+
+    if (navTimeEl) {
+      navTimeEl.addEventListener('mouseenter', function() {
+        navTimeHovering = true;
+        navTimeClearMinWidth();
+        navTimeGrowMinWidth();
+        runNavTimeHoverAnimation();
+      });
+      navTimeEl.addEventListener('mouseleave', function() {
+        navTimeHovering = false;
+        if (navTimeScrambleRaf) {
+          cancelAnimationFrame(navTimeScrambleRaf);
+          navTimeScrambleRaf = null;
+        }
+        navTimeClearMinWidth();
+        updateTime();
+      });
+    }
+
+    updateTime();
+    setInterval(updateTime, 10000);
+
+    /* ── Footer email copy ───────────────────────────────────────── */
+    var footerEmailBtn = document.getElementById('footerEmailBtn');
+    if (footerEmailBtn) {
+      footerEmailBtn.addEventListener('click', function() {
+        navigator.clipboard.writeText('dimaurosamuele@gmail.com').then(function() {
+          footerEmailBtn.textContent = 'Copied!';
+          setTimeout(function() { footerEmailBtn.textContent = 'dimaurosamuele@gmail.com'; }, 2000);
+        });
+      });
+    }
+
+    /* ── Glow plane — scroll-driven rotateX ─────────────────────── */
+    var glow1Section  = document.getElementById('glow1');
+    var glowPlane1    = document.getElementById('glowPlane1');
+    var glow1InView   = false;
+    var glow1RxTarget  = 88;
+    var glow1RxDisplay = 88;
+    var GLOW1_MAX_STEP = 5;
+
+    function updateGlow1() {
+      var rect = glow1Section.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var startAt = vh * 1.1;
+      var range   = vh * 1.2;
+      var p  = Math.max(0, Math.min(1, (startAt - rect.top) / range));
+      var pe = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      glow1RxTarget = 88 - pe * 88;
+    }
+
+    function tickGlow1() {
+      if (!glow1InView) { requestAnimationFrame(tickGlow1); return; }
+      var delta = glow1RxTarget - glow1RxDisplay;
+      if (delta >  GLOW1_MAX_STEP) delta =  GLOW1_MAX_STEP;
+      if (delta < -GLOW1_MAX_STEP) delta = -GLOW1_MAX_STEP;
+      glow1RxDisplay += delta;
+      if (Math.abs(glow1RxDisplay - glow1RxTarget) < 0.02) glow1RxDisplay = glow1RxTarget;
+      glowPlane1.style.transform = 'translateX(-50%) rotateX(' + glow1RxDisplay + 'deg)';
+      requestAnimationFrame(tickGlow1);
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.target === glow1Section) glow1InView = e.isIntersecting;
+        });
+      }, { root: null, threshold: 0, rootMargin: '200px 0px 200px 0px' }).observe(glow1Section);
+    }
+
+    window.addEventListener('scroll', function() { updateGlow1(); }, { passive: true });
+    updateGlow1();
+    requestAnimationFrame(function() {
+      glowPlane1.style.opacity = '1';
+      tickGlow1();
+    });
+
+    /* ── Nav theme — light when nav hits dark part of glow ──────── */
+    var navEl      = document.getElementById('mainNav');
+    var darkBandEl = document.querySelector('.dark-band');
+    var navIsLight = null;
+
+    function updateNavTheme() {
+      if (!navEl) return;
+      var navBot   = navEl.getBoundingClientRect().bottom;
+      var g1Rect   = glow1Section.getBoundingClientRect();
+      var bandRect = darkBandEl ? darkBandEl.getBoundingClientRect() : { top: Infinity, bottom: 0 };
+      /* Mirror homepage: trigger at bottom 25% of glow where image is visibly dark */
+      var g1DarkTop = g1Rect.bottom - g1Rect.height * 0.25;
+      var shouldLight =
+        (g1DarkTop < navBot && g1Rect.bottom > 0) ||
+        (bandRect.top < navBot && bandRect.bottom > 0);
+      if (navIsLight === null || shouldLight !== navIsLight) {
+        navIsLight = shouldLight;
+        navEl.classList.toggle('is-light', shouldLight);
+      }
+    }
+    window.addEventListener('scroll', updateNavTheme, { passive: true });
+    updateNavTheme();
+
+    /* ── Next project title scroll reveal ───────────────────────── */
+    var nextTitleRow   = document.getElementById('nextTitleRow');
+    var nextTitleWords = nextTitleRow ? Array.from(nextTitleRow.querySelectorAll('.cs-next-title-word')) : [];
+    function updateNextTitle() {
+      if (!nextTitleRow) return;
+      var rect = nextTitleRow.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var p = Math.max(0, Math.min(1, (vh * 0.85 - rect.top) / (vh * 0.5)));
+      nextTitleWords.forEach(function(word, i) {
+        var wordP = Math.max(0, Math.min(1, (p - i * 0.3) / 0.7));
+        word.style.color = 'rgba(255,255,255,' + (0.18 + wordP * 0.82) + ')';
+      });
+    }
+    window.addEventListener('scroll', updateNextTitle, { passive: true });
+    updateNextTitle();
+
+    /* ── Smooth scroll — matches homepage feel ───────────────────── */
+    var smoothScrollTarget  = window.scrollY;
+    var smoothScrollCurrent = window.scrollY;
+    var smoothScrollRunning = false;
+    var SMOOTH_LERP  = 0.03;
+    var SMOOTH_SPEED = 0.55;
+
+    /* ── Scroll gate: pause before footer ───────────────────────── */
+    var scrollGateEl    = document.querySelector('.dark-band-pin');
+    var scrollGateDone  = false;
+    function getScrollGate() {
+      if (!scrollGateEl) return Infinity;
+      var rect = scrollGateEl.getBoundingClientRect();
+      return rect.top + rect.height + window.scrollY - window.innerHeight;
+    }
+
+    function smoothScrollTick() {
+      var maxY = document.documentElement.scrollHeight - window.innerHeight;
+      smoothScrollTarget = Math.max(0, Math.min(smoothScrollTarget, maxY));
+      smoothScrollCurrent += (smoothScrollTarget - smoothScrollCurrent) * SMOOTH_LERP;
+      if (Math.abs(smoothScrollTarget - smoothScrollCurrent) < 0.5) {
+        smoothScrollCurrent = smoothScrollTarget;
+        window.scrollTo(0, smoothScrollCurrent);
+        smoothScrollRunning = false;
+        return;
+      }
+      window.scrollTo(0, smoothScrollCurrent);
+      requestAnimationFrame(smoothScrollTick);
+    }
+
+    function startSmoothScroll() {
+      if (!smoothScrollRunning) {
+        smoothScrollRunning = true;
+        requestAnimationFrame(smoothScrollTick);
+      }
+    }
+
+    window.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      var maxY = document.documentElement.scrollHeight - window.innerHeight;
+      smoothScrollTarget += e.deltaY * SMOOTH_SPEED;
+      smoothScrollTarget = Math.max(0, Math.min(smoothScrollTarget, maxY));
+
+      /* Gate: snap to just before footer, release on next scroll */
+      var gateY = getScrollGate();
+      if (scrollGateDone && smoothScrollCurrent < gateY - 50) {
+        scrollGateDone = false;
+      }
+      if (!scrollGateDone && smoothScrollTarget > gateY) {
+        if (Math.abs(smoothScrollCurrent - gateY) < 20) {
+          scrollGateDone = true;
+          smoothScrollTarget = maxY;
+        } else {
+          smoothScrollTarget = gateY;
+        }
+      }
+
+      startSmoothScroll();
+    }, { passive: false });
+
+    window.addEventListener('touchstart', function() {
+      smoothScrollTarget  = window.scrollY;
+      smoothScrollCurrent = window.scrollY;
+    }, { passive: true });
+
+  })();
+  </script>
+</body>
+</html>

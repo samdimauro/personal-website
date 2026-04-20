@@ -1,0 +1,31 @@
+/* Custom cursor pack — file URLs with preload hints in each HTML page */
+:root {
+  --cursor-default:  url('cursor/default.svg')       33 28, default;
+  --cursor-pointer:  url('cursor/hand-open.svg')      35 13, pointer;
+  --cursor-grab:     url('cursor/hand-open.svg')      35 13, grab;
+  --cursor-grabbing: url('cursor/hand-grabbing.svg')  35 35, grabbing;
+  --cursor-text:     url('cursor/text-cursor.svg')    33 32, text;
+  --cursor-move:     url('cursor/move.svg')           32 32, move;
+}
+
+html {
+  cursor: var(--cursor-default);
+}
+
+a[href],
+button,
+[role='button'] {
+  cursor: var(--cursor-pointer);
+}
+
+p,
+h1, h2, h3, h4, h5, h6,
+li,
+blockquote,
+figcaption,
+input,
+textarea,
+select,
+[contenteditable='true'] {
+  cursor: var(--cursor-text);
+}

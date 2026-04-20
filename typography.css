@@ -1,0 +1,97 @@
+/*
+  Measure in ch; line-height in % only.
+  Hero + intro (.cs-body-lg): 65ch / 115%; other display: 30ch / 90%; headings: 45ch / 115–125%; paragraphs: 65ch / 160%.
+  Left-aligned rag; no justification. Next-project card uses centred type in .cs-next-link.
+  text-wrap: balance on display/headings; pretty on paragraphs — no orphans sitewide.
+*/
+
+/* ─── Display tier ─── */
+.cs-hero-title {
+  max-width: 100%;
+  line-height: 100%;
+  width: 100%;
+  text-align: left;
+  text-wrap: pretty;
+}
+
+.cs-body-lg,
+.cs-body-lg p {
+  max-width: min(100%, 55ch);
+  line-height: 115%;
+  width: 100%;
+  text-align: left;
+  text-wrap: pretty;
+}
+
+.cs-stat-value,
+.works-title-word,
+.contact-heading {
+  max-width: min(100%, 35ch);
+  line-height: 90%;
+  width: 100%;
+  text-align: left;
+  text-wrap: balance;
+}
+
+.bio-text {
+  max-width: min(100%, 55ch);
+  line-height: 115%;
+  width: 100%;
+  text-align: left;
+  text-wrap: pretty;
+}
+
+.cs-callout-inner {
+  max-width: min(100%, 35ch);
+  line-height: 115%;
+  width: 100%;
+  text-align: left;
+  text-wrap: balance;
+}
+
+/* ─── Heading tier ─── */
+.cs-label,
+.cs-grid-item-label,
+.cs-insight-title,
+.cs-stat-label,
+.cs-name {
+  max-width: min(100%, 45ch);
+  line-height: 125%;
+  width: 100%;
+  text-align: left;
+  text-wrap: balance;
+}
+
+.cs-problem-title {
+  max-width: min(100%, 45ch);
+  line-height: 115%;
+  width: 100%;
+  text-align: left;
+  text-wrap: balance;
+}
+
+/* ─── Paragraph tier ─── */
+.cs-problem-copy,
+.cs-body,
+.cs-text-2col-body,
+.cs-insight-desc,
+.cs-grid-item-text,
+.cs-meta-value,
+.cs-desc,
+.contact-sub {
+  max-width: min(100%, 55ch);
+  line-height: 160%;
+  width: 100%;
+  text-align: left;
+  text-wrap: pretty;
+}
+
+/* Next card: measure + leading; centred block */
+.cs-next-link {
+  max-width: min(100%, 35ch);
+  line-height: 90%;
+  width: auto;
+  margin-inline: auto;
+  text-align: center;
+  text-wrap: balance;
+}

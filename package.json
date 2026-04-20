@@ -1,0 +1,16 @@
+{
+  "name": "personal-website",
+  "version": "1.0.0",
+  "main": "serve.js",
+  "scripts": {
+    "build": "node build-images.js",
+    "serve": "node serve.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}

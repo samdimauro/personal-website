@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.samdimauro.xyz)",
+      "Bash(curl -s \"https://www.samdimauro.xyz/newhome\")",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(claude mcp:*)",
+      "Bash(find /Users/samuele.dimauro/.claude -name *.json -maxdepth 3)",
+      "Bash(npx -y figma-developer-mcp --help)",
+      "Bash(/usr/local/bin/npm list:*)",
+      "WebSearch",
+      "Bash(\"/Users/samuele.dimauro/Library/Application Support/Claude/claude-code/2.1.92/claude.app/Contents/MacOS/claude\" mcp list)",
+      "Bash(\"/Users/samuele.dimauro/Library/Application Support/Claude/claude-code/2.1.92/claude.app/Contents/MacOS/claude\" mcp add --transport http figma https://mcp.figma.com/mcp)",
+      "Bash(\"/Users/samuele.dimauro/Library/Application Support/Claude/claude-code/2.1.92/claude.app/Contents/MacOS/claude\" mcp remove figma)",
+      "Bash(\"/Users/samuele.dimauro/Library/Application Support/Claude/claude-code/2.1.92/claude.app/Contents/MacOS/claude\" mcp add --transport http figma https://mcp.figma.com/mcp -s user)",
+      "mcp__figma__whoami",
+      "Bash(node serve.js)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000)",
+      "mcp__figma__generate_figma_design",
+      "Bash(open \"http://localhost:3001/#figmacapture=677e718a-1f98-4e8a-aebe-ee1786980004&figmaendpoint=https%3A%2F%2Fmcp.figma.com%2Fmcp%2Fcapture%2F677e718a-1f98-4e8a-aebe-ee1786980004%2Fsubmit&figmadelay=1000\")"
+    ]
+  }
+}

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Orbit Gallery</title>
+  <link rel="stylesheet" href="cursors.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: #fff;
+      color: #181818;
+      /* Prevent body scroll interfering — orbit captures wheel events */
+      overflow-x: hidden;
+      text-wrap: pretty;
+    }
+
+    .card-title {
+      text-wrap: balance;
+    }
+
+    /* ─── Full-screen orbit stage ─── */
+    .orbit-section {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Perspective lives here, on the outermost element.
+         Higher value = more "zoomed out" / less extreme foreshortening */
+      perspective: 2400px;
+      perspective-origin: 50% 50%;
+      overflow: hidden;
+    }
+
+    /*
+      Tilt layer — receives cursor-follow rotateX/rotateZ.
+      Must preserve-3d so children exist in the same 3D space.
+    */
+    .orbit-tilt {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /*
+      Orbit ring — width/height 0 so it sits at the exact centre.
+      Cards are absolutely positioned from this origin.
+      preserve-3d is critical: without it, rotateY+translateZ collapses.
+    */
+    .orbit-ring {
+      position: relative;
+      width: 0;
+      height: 0;
+      transform-style: preserve-3d;
+    }
+
+    /* ─── Individual card ─── */
+    .orbit-card {
+      position: absolute;
+      width: var(--card-w, 280px);
+      height: var(--card-h, 350px);
+      /* Centre the card on the origin */
+      margin-left: calc(var(--card-w, 320px) / -2);
+      margin-top: calc(var(--card-h, 400px) / -2);
+      border-radius: 18px;
+      overflow: hidden;
+      will-change: transform;
+      cursor: var(--cursor-grab);
+      user-select: none;
+      /* GPU layer */
+      backface-visibility: visible;
+    }
+
+    .orbit-card:active { cursor: var(--cursor-grabbing); }
+
+    /* Card inner */
+    .card-inner {
+      width: 100%; height: 100%;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 1.65rem;
+      font-weight: 750;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: auto;
+    }
+
+    .tag {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ─── Card themes ─── */
+
+    /* 1 — Dark poster */
+    .c1 .card-inner { background: #111; color: #fff; }
+    .c1 .tag { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
+    .c1 .deco {
+      position: absolute; bottom: -30px; right: -30px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: radial-gradient(circle, #e8ff4a 0%, transparent 65%);
+      opacity: 0.3; pointer-events: none;
+    }
+
+    /* 2 — Dark design system */
+    .c2 .card-inner { background: #141414; color: #fff; }
+    .c2 .tag { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.6); }
+    .c2 .swatch-grid {
+      display: flex; flex-direction: column; gap: 6px; margin-top: 20px; flex: 1;
+    }
+    .c2 .swatch-row-g { display: flex; gap: 5px; }
+    .c2 .swatch { flex: 1; height: 28px; border-radius: 6px; }
+
+    /* 3 — Light sketches */
+    .c3 .card-inner { background: #f5f4ef; color: #111; }
+    .c3 .tag { background: rgba(0,0,0,0.07); color: rgba(24,24,24,0.65); }
+    .c3 .sketch-grid {
+      flex: 1; margin-top: 16px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px;
+    }
+    .c3 .sketch-cell { border-radius: 8px; background: rgba(0,0,0,0.07); }
+
+    /* 4 — Dark mobile app */
+    .c4 .card-inner { background: #0f0f0f; color: #fff; }
+    .c4 .tag { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.6); }
+    .c4 .phone-wrap {
+      flex: 1; display: flex; align-items: center; justify-content: center; margin-top: 12px;
+    }
+    .c4 .phone {
+      width: 130px; aspect-ratio: 9/19; border-radius: 22px;
+      border: 2px solid rgba(255,255,255,0.13); background: #1c1c1c;
+      padding: 12px 10px; display: flex; flex-direction: column; gap: 7px;
+    }
+    .c4 .p-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.1); }
+
+    /* 5 — Light brand/identity */
+    .c5 .card-inner { background: #eeeee9; color: #111; }
+    .c5 .tag { background: rgba(0,0,0,0.08); color: rgba(24,24,24,0.65); }
+    .c5 .brand-grid {
+      flex: 1; margin-top: 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .c5 .brand-cell {
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 26px; font-weight: 800;
+    }
+
+    /* 6 — Dark laptop/web */
+    .c6 .card-inner { background: #111; color: #fff; }
+    .c6 .tag { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.6); }
+    .c6 .laptop-wrap { flex: 1; margin-top: 14px; }
+    .c6 .laptop-screen {
+      width: 100%; aspect-ratio: 16/10;
+      background: #2a2a2a; border-radius: 8px 8px 0 0;
+      border: 1.5px solid #3a3a3a; padding: 8px; overflow: hidden;
+    }
+    .c6 .laptop-base { height: 7px; background: #252525; border-radius: 0 0 4px 4px; }
+    .c6 .sc { width: 100%; height: 100%; background: #1e1e1e; border-radius: 4px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+    .c6 .sc-bar { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.1); }
+
+    /* ─── Drag cursor ─── */
+    .orbit-section.dragging { cursor: var(--cursor-grabbing); }
+    .orbit-section.dragging .orbit-card { cursor: var(--cursor-grabbing); }
+  </style>
+</head>
+<body>
+
+<div class="orbit-section" id="orbitSection">
+  <div class="orbit-tilt" id="orbitTilt">
+    <div class="orbit-ring" id="orbitRing">
+
+      <!-- Card 1: Brand Poster -->
+      <div class="orbit-card c1">
+        <div class="card-inner">
+          <div class="deco"></div>
+          <span class="card-eyebrow">Branding</span>
+          <h2 class="card-title">Ride It.<br>Love It.</h2>
+          <div class="card-tags">
+            <span class="tag">Brand Identity</span>
+            <span class="tag">Print</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Design System / Colours -->
+      <div class="orbit-card c2">
+        <div class="card-inner">
+          <span class="card-eyebrow">Primitives</span>
+          <h2 class="card-title">Colours</h2>
+          <div class="swatch-grid">
+            <div class="swatch-row-g">
+              <div class="swatch" style="background:#fff"></div>
+              <div class="swatch" style="background:#888"></div>
+              <div class="swatch" style="background:#222"></div>
+            </div>
+            <div class="swatch-row-g">
+              <div class="swatch" style="background:#d4fc52"></div>
+              <div class="swatch" style="background:#a5d400"></div>
+              <div class="swatch" style="background:#6b8e00"></div>
+            </div>
+            <div class="swatch-row-g">
+              <div class="swatch" style="background:#c084fc"></div>
+              <div class="swatch" style="background:#9333ea"></div>
+              <div class="swatch" style="background:#5b21b6"></div>
+            </div>
+          </div>
+          <div class="card-tags" style="margin-top:14px">
+            <span class="tag">Design System</span>
+            <span class="tag">UI</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Research / Sketches -->
+      <div class="orbit-card c3">
+        <div class="card-inner">
+          <span class="card-eyebrow">Research</span>
+          <h2 class="card-title">Good<br>Traveller</h2>
+          <div class="sketch-grid">
+            <div class="sketch-cell"></div>
+            <div class="sketch-cell" style="background:rgba(0,0,0,0.11)"></div>
+            <div class="sketch-cell"></div>
+            <div class="sketch-cell" style="background:rgba(0,0,0,0.05)"></div>
+            <div class="sketch-cell"></div>
+            <div class="sketch-cell" style="background:rgba(0,0,0,0.09)"></div>
+          </div>
+          <div class="card-tags" style="margin-top:14px">
+            <span class="tag">UX Research</span>
+            <span class="tag">Ideation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Mobile App -->
+      <div class="orbit-card c4">
+        <div class="card-inner">
+          <span class="card-eyebrow">Product</span>
+          <h2 class="card-title">Event<br>Discovery</h2>
+          <div class="phone-wrap">
+            <div class="phone">
+              <div class="p-bar" style="background:#d4fc52; width:60%"></div>
+              <div class="p-bar"></div>
+              <div class="p-bar" style="width:80%"></div>
+              <div class="p-bar" style="background:rgba(196,132,252,0.4); width:50%"></div>
+              <div class="p-bar"></div>
+              <div class="p-bar" style="width:70%"></div>
+              <div class="p-bar" style="background:#d4fc52; width:40%"></div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">iOS</span>
+            <span class="tag">0→1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5: Kids Brand -->
+      <div class="orbit-card c5">
+        <div class="card-inner">
+          <span class="card-eyebrow">Branding</span>
+          <h2 class="card-title">kigs</h2>
+          <div class="brand-grid">
+            <div class="brand-cell" style="background:#f7e030; color:#111">K</div>
+            <div class="brand-cell" style="background:#ff4d2e; color:#fff">i</div>
+            <div class="brand-cell" style="background:#2e9cff; color:#fff">g</div>
+            <div class="brand-cell" style="background:#38c97a; color:#fff">s</div>
+          </div>
+          <div class="card-tags" style="margin-top:14px">
+            <span class="tag">Identity</span>
+            <span class="tag">Brand</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6: OS Maps / Web -->
+      <div class="orbit-card c6">
+        <div class="card-inner">
+          <span class="card-eyebrow">Web</span>
+          <h2 class="card-title">OS Maps</h2>
+          <div class="laptop-wrap">
+            <div class="laptop-screen">
+              <div class="sc">
+                <div class="sc-bar" style="background:#c084fc; width:55%"></div>
+                <div class="sc-bar"></div>
+                <div class="sc-bar" style="width:80%"></div>
+                <div class="sc-bar" style="width:65%"></div>
+                <div class="sc-bar" style="background:#d4fc52; width:45%"></div>
+              </div>
+            </div>
+            <div class="laptop-base"></div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">Research</span>
+            <span class="tag">Design Systems</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /orbit-ring -->
+  </div><!-- /orbit-tilt -->
+</div><!-- /orbit-section -->
+
+<script>
+  // ─── Config ──────────────────────────────────────────────────────────────────
+  const ORBIT_RADIUS   = 900;   // px — distance from centre to card face
+  const AUTO_SPEED     = 0.12;  // deg/frame — base auto-rotation
+  const SCROLL_FACTOR  = 0.04;  // scroll delta → deg velocity
+  const SCROLL_DECAY   = 0.92;
+  const DRAG_DECAY     = 0.88;
+  const DRAG_SENS      = 0.25;  // px drag → deg rotation
+  const TILT_STRENGTH  = 8;     // max tilt degrees for cursor follow
+
+  // ─── State ───────────────────────────────────────────────────────────────────
+  let orbitAngle  = 0;  // current rotation of the ring (degrees)
+  let autoVel     = AUTO_SPEED;
+  let scrollVel   = 0;
+  let dragVel     = 0;
+
+  let isDragging    = false;
+  let dragStartX    = 0;
+  let dragStartAngle = 0;
+  let lastDragX     = 0;
+  let lastDragTime  = 0;
+
+  let tiltX = 0;  // cursor follow: up/down tilt (rotateX)
+  let tiltZ = 0;  // cursor follow: side tilt  (rotateZ)
+  let rafId = null;
+
+  // ─── DOM refs ────────────────────────────────────────────────────────────────
+  const section = document.getElementById('orbitSection');
+  const tilt    = document.getElementById('orbitTilt');
+  const ring    = document.getElementById('orbitRing');
+  const cards   = Array.from(ring.querySelectorAll('.orbit-card'));
+  const N       = cards.length;
+  const ANGLE_STEP = 360 / N;
+
+  // ─── Position cards ──────────────────────────────────────────────────────────
+  // Per the spec: rotateY(angle) translateZ(radius)
+  // This places each card on the surface of a cylinder, facing outward.
+  function positionCards() {
+    cards.forEach((card, i) => {
+      const angle = ANGLE_STEP * i + orbitAngle;
+      card.style.transform = `rotateY(${angle}deg) translateZ(${ORBIT_RADIUS}px)`;
+    });
+  }
+
+  // ─── Animation loop ───────────────────────────────────────────────────────────
+  function tick() {
+    // Additive velocity from all three sources
+    const total = autoVel + scrollVel + dragVel;
+    orbitAngle += total;
+
+    // Decay non-auto velocities
+    scrollVel *= SCROLL_DECAY;
+    dragVel   *= DRAG_DECAY;
+
+    // Clamp near-zero to exactly zero (avoid sub-threshold loops)
+    if (Math.abs(scrollVel) < 0.001) scrollVel = 0;
+    if (Math.abs(dragVel)   < 0.001) dragVel   = 0;
+
+    positionCards();
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startLoop() {
+    if (!rafId) rafId = requestAnimationFrame(tick);
+  }
+
+  function stopLoop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  // ─── Scroll ──────────────────────────────────────────────────────────────────
+  section.addEventListener('wheel', e => {
+    e.preventDefault();
+    scrollVel += e.deltaY * SCROLL_FACTOR * 0.1;
+    startLoop();
+  }, { passive: false });
+
+  // ─── Drag ────────────────────────────────────────────────────────────────────
+  section.addEventListener('mousedown', e => {
+    isDragging     = true;
+    dragStartX     = e.clientX;
+    dragStartAngle = orbitAngle;
+    lastDragX      = e.clientX;
+    lastDragTime   = performance.now();
+    dragVel        = 0;
+    section.classList.add('dragging');
+    // Pause auto while dragging so it doesn't fight user input
+    autoVel = 0;
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx  = e.clientX - dragStartX;
+    orbitAngle = dragStartAngle + dx * DRAG_SENS;
+
+    const now = performance.now();
+    const dt  = now - lastDragTime;
+    if (dt > 0) {
+      // pixels/ms → degrees/frame (@ ~60fps, 1 frame ≈ 16.67ms)
+      dragVel = ((e.clientX - lastDragX) / dt) * 16.67 * DRAG_SENS;
+    }
+    lastDragX    = e.clientX;
+    lastDragTime = now;
+
+    positionCards();
+  });
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    section.classList.remove('dragging');
+    // Restore auto-rotation — it blends in additively
+    autoVel = AUTO_SPEED;
+    startLoop();
+  }
+
+  document.addEventListener('mouseup',    endDrag);
+  section.addEventListener('mouseleave',  endDrag);
+
+  // Touch support
+  section.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    isDragging     = true;
+    dragStartX     = t.clientX;
+    dragStartAngle = orbitAngle;
+    lastDragX      = t.clientX;
+    lastDragTime   = performance.now();
+    dragVel        = 0;
+    autoVel        = 0;
+  }, { passive: true });
+
+  section.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const t  = e.touches[0];
+    const dx = t.clientX - dragStartX;
+    orbitAngle = dragStartAngle + dx * DRAG_SENS;
+
+    const now = performance.now();
+    const dt  = now - lastDragTime;
+    if (dt > 0) {
+      dragVel = ((t.clientX - lastDragX) / dt) * 16.67 * DRAG_SENS;
+    }
+    lastDragX    = t.clientX;
+    lastDragTime = now;
+    positionCards();
+  }, { passive: true });
+
+  section.addEventListener('touchend', () => {
+    isDragging = false;
+    autoVel    = AUTO_SPEED;
+    startLoop();
+  });
+
+  // ─── Cursor follow (tilt) ────────────────────────────────────────────────────
+  section.addEventListener('mousemove', e => {
+    if (isDragging) return;
+    const rect = section.getBoundingClientRect();
+    const nx   = (e.clientX - rect.left)  / rect.width  - 0.5; // -0.5 → 0.5
+    const ny   = (e.clientY - rect.top)   / rect.height - 0.5;
+
+    // Smooth tilt towards target
+    tiltX += (-ny * TILT_STRENGTH - tiltX) * 0.08;
+    tiltZ += ( nx * TILT_STRENGTH - tiltZ) * 0.08;
+
+    tilt.style.transform = `rotateX(${tiltX}deg) rotateZ(${tiltZ}deg)`;
+  });
+
+  section.addEventListener('mouseleave', () => {
+    // Ease tilt back to zero
+    function resetTilt() {
+      tiltX *= 0.9;
+      tiltZ *= 0.9;
+      tilt.style.transform = `rotateX(${tiltX}deg) rotateZ(${tiltZ}deg)`;
+      if (Math.abs(tiltX) > 0.01 || Math.abs(tiltZ) > 0.01) {
+        requestAnimationFrame(resetTilt);
+      }
+    }
+    resetTilt();
+  });
+
+  // ─── Kick off ────────────────────────────────────────────────────────────────
+  positionCards();
+  startLoop();
+</script>
+
+</body>
+</html>
